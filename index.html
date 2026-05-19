@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b6b5c" />
+  <title>CLEAR-AMR Site Visit Tool</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --ink: #132033;
+      --muted: #5d6b82;
+      --line: #dbe3ef;
+      --brand: #0b6b5c;
+      --brand2: #0f8a75;
+      --soft: #e7f6f2;
+      --soft2: #f2fbf8;
+      --warn: #845400;
+      --warnbg: #fff5db;
+      --bad: #9b1c31;
+      --badbg: #fde8ec;
+      --good: #11643c;
+      --blue: #1d4f91;
+      --bluebg: #eaf2ff;
+      --shadow: 0 12px 30px rgba(16, 32, 54, 0.10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(244, 247, 251, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1, h2, h3 { letter-spacing: -0.02em; }
+
+    h1 {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.2;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 9px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      background: #fff;
+      white-space: nowrap;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
+
+    .progress {
+      height: 9px;
+      border-radius: 999px;
+      background: #e5ebf5;
+      overflow: hidden;
+    }
+
+    .progress > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--brand), var(--brand2));
+      border-radius: 999px;
+      transition: width 180ms ease;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px;
+      padding-bottom: 112px;
+    }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .card-head {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fbfcff);
+    }
+
+    .card-head h2 {
+      margin: 0 0 4px;
+      font-size: 1.15rem;
+    }
+
+    .card-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .card-body {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .note {
+      padding: 12px;
+      border-radius: 15px;
+      background: var(--soft);
+      border: 1px solid #c9e7df;
+      color: #12463e;
+      font-size: 0.92rem;
+    }
+
+    .warning {
+      padding: 12px;
+      border-radius: 15px;
+      background: var(--warnbg);
+      border: 1px solid #f1d48b;
+      color: var(--warn);
+      font-size: 0.92rem;
+    }
+
+    .bluebox {
+      padding: 12px;
+      border-radius: 15px;
+      background: var(--bluebg);
+      border: 1px solid #c9dcff;
+      color: var(--blue);
+      font-size: 0.92rem;
+    }
+
+    .grid { display: grid; gap: 12px; }
+
+    @media (min-width: 760px) {
+      .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-weight: 450;
+      font-size: 0.82rem;
+    }
+
+    input[type="text"], input[type="date"], input[type="time"], select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      font: inherit;
+      background: #fff;
+      color: var(--ink);
+      min-height: 46px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 92px;
+    }
+
+    input:focus, select:focus, textarea:focus, button:focus {
+      outline: 3px solid rgba(15, 138, 117, 0.22);
+      outline-offset: 2px;
+      border-color: var(--brand2);
+    }
+
+    .choice-list { display: grid; gap: 8px; }
+
+    .choice {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 9px;
+      align-items: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      font-weight: 620;
+    }
+
+    .choice small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-weight: 430;
+    }
+
+    .choice input { margin-top: 2px; }
+
+    .microgrid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    }
+
+    .micro {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: #fff;
+      min-height: 74px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .micro b { color: var(--brand); font-size: 0.88rem; }
+    .micro span { color: var(--muted); font-size: 0.8rem; }
+
+    details.help {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    details.help summary {
+      cursor: pointer;
+      padding: 13px;
+      font-weight: 800;
+      color: var(--brand);
+      list-style: none;
+    }
+
+    details.help summary::-webkit-details-marker { display: none; }
+
+    details.help .inside {
+      padding: 0 13px 13px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .question-bank { display: grid; gap: 10px; }
+
+    .question-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .question-card h3 {
+      margin: 0;
+      padding: 12px;
+      font-size: 0.98rem;
+      color: var(--brand);
+      border-bottom: 1px solid var(--line);
+      background: #fbfcff;
+    }
+
+    .question-card ul {
+      margin: 0;
+      padding: 12px 14px 14px 32px;
+      color: var(--ink);
+    }
+
+    .question-card li { margin: 8px 0; }
+
+    .pathway-preview, .reason-preview {
+      padding: 12px;
+      background: var(--soft2);
+      border: 1px dashed var(--brand2);
+      border-radius: 14px;
+      font-weight: 700;
+      color: #103c35;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .photo-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-card textarea {
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 0;
+      min-height: 76px;
+      font-size: 0.85rem;
+    }
+
+    .photo-actions {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    button, .button-label {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      font-weight: 800;
+      background: var(--brand);
+      color: #fff;
+      cursor: pointer;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+    }
+
+    button.secondary, .button-label.secondary {
+      background: #fff;
+      color: var(--brand);
+      border: 1px solid var(--line);
+    }
+
+    button.ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    button.danger {
+      background: var(--badbg);
+      color: var(--bad);
+      border: 1px solid #f3b6c1;
+    }
+
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .nav-row {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: rgba(244, 247, 251, 0.97);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    }
+
+    .nav-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .status { display: grid; gap: 8px; }
+
+    .status-item {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .ok { color: var(--good); font-weight: 850; }
+    .missing { color: var(--bad); font-weight: 850; }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    .summary-table th, .summary-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .summary-table th {
+      width: 34%;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--brand);
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin: 3px 4px 3px 0;
+    }
+
+    #printReport { display: none; }
+
+    @media print {
+      @page { margin: 12mm; }
+      body { background: #fff; color: #000; }
+      header, main, .nav-row, .no-print { display: none !important; }
+      #printReport { display: block !important; }
+      #printReport h1 { font-size: 1.25rem; margin: 0 0 4mm; }
+      #printReport h2 { font-size: 1.05rem; margin: 6mm 0 2mm; }
+      .summary-table { page-break-inside: avoid; }
+      .summary-table th, .summary-table td { border-bottom: 1px solid #bbb; }
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+      .photo-card { page-break-inside: avoid; box-shadow: none; border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <header class="no-print">
+    <div class="topbar">
+      <div class="title-row">
+        <h1>CLEAR-AMR Site Visit Tool</h1>
+        <span class="tag">Mobile form</span>
+      </div>
+      <div>
+        <div class="progress-label"><span id="stepName">Start</span><span id="stepCount">1 of 8</span></div>
+        <div class="progress"><div id="progressBar"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app">
+    <section class="step active" data-step="Start">
+      <div class="card">
+        <div class="card-head">
+          <h2>1. Start</h2>
+          <p>Record where you are and who is completing the form.</p>
+        </div>
+        <div class="card-body">
+          <div class="note">Look, ask if possible, take useful photos, and write what still needs checking.</div>
+          <div class="microgrid">
+            <div class="micro"><b>Look</b><span>What can you see?</span></div>
+            <div class="micro"><b>Ask</b><span>Who knows this area?</span></div>
+            <div class="micro"><b>Explain</b><span>How could the risk move?</span></div>
+            <div class="micro"><b>Check</b><span>What is still uncertain?</span></div>
+          </div>
+          <div class="grid two">
+            <label>Site name<input id="siteName" type="text" autocomplete="off" /></label>
+            <label>Location<input id="location" type="text" autocomplete="off" /></label>
+            <label>Date<input id="visitDate" type="date" /></label>
+            <label>Time<input id="visitTime" type="time" /></label>
+            <label>Student 1<input id="investigator1" type="text" autocomplete="off" /></label>
+            <label>Student 2<input id="investigator2" type="text" autocomplete="off" /></label>
+            <label>Person spoken to, if any<input id="personSpoken" type="text" autocomplete="off" /></label>
+            <label>Their role<input id="personRole" type="text" autocomplete="off" /></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="Look">
+      <div class="card">
+        <div class="card-head">
+          <h2>2. Look</h2>
+          <p>Tick what you see. Then write one short observation.</p>
+        </div>
+        <div class="card-body">
+          <div class="note">Write what is visible. Do not write who is to blame.</div>
+          <div class="choice-list" data-group="concerns">
+            <label class="choice"><input type="checkbox" value="Open or overflowing waste" /><span>Open or overflowing waste</span></label>
+            <label class="choice"><input type="checkbox" value="Food waste near eating area" /><span>Food waste near eating area</span></label>
+            <label class="choice"><input type="checkbox" value="Clinic or health waste" /><span>Clinic or health waste</span></label>
+            <label class="choice"><input type="checkbox" value="Leftover or thrown-away medicines" /><span>Leftover or thrown-away medicines</span></label>
+            <label class="choice"><input type="checkbox" value="Blocked gutter, stagnant water, or open drain" /><span>Blocked gutter, stagnant water, or open drain</span></label>
+            <label class="choice"><input type="checkbox" value="Dirty toilet or no handwashing point" /><span>Dirty toilet or no handwashing point</span></label>
+            <label class="choice"><input type="checkbox" value="Animals reaching waste, food, water, or drains" /><span>Animals reaching waste, food, water, or drains</span></label>
+            <label class="choice"><input type="checkbox" value="Poor cleaning or poor maintenance" /><span>Poor cleaning or poor maintenance</span></label>
+          </div>
+          <label>Other thing seen<input id="otherConcern" type="text" /></label>
+          <label>Observation<span class="hint">Example: Open food waste was beside the cafeteria. Flies were present. Students were eating nearby.</span><textarea id="visibleConcern"></textarea></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="Ask if useful">
+      <div class="card">
+        <div class="card-head">
+          <h2>3. Ask if useful</h2>
+          <p>Use this only when someone is available and willing to speak.</p>
+        </div>
+        <div class="card-body">
+          <label class="choice"><input id="askNotUsed" type="checkbox" /><span>No discussion was possible or needed now<small>This step can be left blank.</small></span></label>
+          <details class="help" open>
+            <summary>Questions about routine</summary>
+            <div class="inside">
+              <ul>
+                <li>Who usually looks after this area?</li>
+                <li>How often is it cleaned or cleared?</li>
+                <li>What usually makes the problem come back?</li>
+              </ul>
+            </div>
+          </details>
+          <details class="help">
+            <summary>Questions about who can act</summary>
+            <div class="inside">
+              <ul>
+                <li>Who can agree a small change here?</li>
+                <li>Who controls tools, repairs, or waste collection?</li>
+                <li>Who should be contacted if the problem continues?</li>
+              </ul>
+            </div>
+          </details>
+          <details class="help">
+            <summary>Questions about what is possible</summary>
+            <div class="inside">
+              <ul>
+                <li>What small change could happen this week?</li>
+                <li>What would need help from the department or university?</li>
+                <li>What would make the change easier to keep going?</li>
+              </ul>
+            </div>
+          </details>
+          <label>Main answer heard<span class="hint">Write only the answer that helps the site decision.</span><textarea id="siteActorAnswer"></textarea></label>
+          <label>Question to ask later<textarea id="followUpQuestion"></textarea></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="Risk route">
+      <div class="card">
+        <div class="card-head">
+          <h2>4. Risk route</h2>
+          <p>Show how the concern could move from a source to people, animals, water, food, or surfaces.</p>
+        </div>
+        <div class="card-body">
+          <div class="note"><b>Simple route:</b> source → way it moves → who or what it reaches → why it matters → possible control.</div>
+          <div class="grid two">
+            <label>Source<span class="hint">Where does it start?</span><textarea id="source" placeholder="Open waste, blocked gutter, thrown-away medicine..."></textarea></label>
+            <label>Way it could move<span class="hint">How could it spread?</span><textarea id="route" placeholder="Hands, flies, animals, rain water, shoes, surfaces..."></textarea></label>
+            <label>Who or what it could reach<span class="hint">People, animals, water, food, or surfaces.</span><textarea id="exposurePoint" placeholder="Students, cleaners, food sellers, water users..."></textarea></label>
+            <label>Why it matters for AMR<span class="hint">Use a careful link. Do not say AMR is proven.</span><textarea id="amrRelevance" placeholder="It may increase contact with contaminated waste, infections, or medicine residues."></textarea></label>
+            <label>Possible control<span class="hint">What could reduce this route?</span><textarea id="feasibleControl" placeholder="Covered bin, cleaning rota, gutter clearing, safe disposal..."></textarea></label>
+          </div>
+          <div class="pathway-preview" id="pathwayPreview">Complete the fields above to build the risk route sentence.</div>
+          <label>Edited risk route sentence<textarea id="pathwaySentence"></textarea></label>
+          <details class="help">
+            <summary>Examples</summary>
+            <div class="inside">
+              <p><b>Waste:</b> Open food waste could reach students through flies, hands, and surfaces.</p>
+              <p><b>Drain:</b> Waste water could reach students through shoes, splashing, and nearby surfaces.</p>
+              <p><b>Medicine:</b> Thrown-away antibiotics could enter general waste, soil, or drains.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="Evidence">
+      <div class="card">
+        <div class="card-head">
+          <h2>5. Evidence</h2>
+          <p>Add only useful images and short notes.</p>
+        </div>
+        <div class="card-body">
+          <div class="warning">Avoid faces, names, private papers, and anything that could identify a person without need.</div>
+          <label class="button-label secondary" for="photoInput">Add photos</label>
+          <input class="no-print" id="photoInput" type="file" accept="image/*" capture="environment" multiple style="display:none" />
+          <div id="photoGrid" class="photo-grid"></div>
+          <label>Evidence note<span class="hint">What does the evidence show?</span><textarea id="evidenceNote"></textarea></label>
+          <label>What should not be claimed yet?<span class="hint">Example: We cannot say resistant bacteria are present because no laboratory test was done.</span><textarea id="notClaimedYet"></textarea></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="Classify">
+      <div class="card">
+        <div class="card-head">
+          <h2>6. Classify</h2>
+          <p>Choose the closest answer. Use “not sure” where needed.</p>
+        </div>
+        <div class="card-body">
+          <label>Main type of risk route</label>
+          <div class="choice-list" data-radio="pathwayCategory">
+            <label class="choice"><input name="pathwayCategory" type="radio" value="Direct AMR route" /><span>Direct AMR route<small>Medicines, clinic waste, wastewater, sewage, or likely medicine residue.</small></span></label>
+            <label class="choice"><input name="pathwayCategory" type="radio" value="People-animal-environment route" /><span>People-animal-environment route<small>Waste, water, food, drains, soil, animals, and people are linked.</small></span></label>
+            <label class="choice"><input name="pathwayCategory" type="radio" value="Infection-pressure route" /><span>Infection-pressure route<small>Dirty toilets, food contamination, poor handwashing, or poor cleaning.</small></span></label>
+            <label class="choice"><input name="pathwayCategory" type="radio" value="General environmental issue" /><span>General environmental issue<small>Litter or nuisance without a clear AMR, waste, water, animal, medicine, or exposure route.</small></span></label>
+          </div>
+          <div class="grid two">
+            <label>How many people may come in contact?
+              <select id="exposureLevel"><option value="">Select</option><option>Few</option><option>Some</option><option>Many</option><option>Not sure</option></select>
+            </label>
+            <label>Can this be changed in nine months?
+              <select id="feasibility"><option value="">Select</option><option>Yes, likely</option><option>Maybe, with support</option><option>Unlikely without major support</option><option>Not sure</option></select>
+            </label>
+            <label>Who can decide or act?
+              <select id="authorityClarity"><option value="">Select</option><option>Clear person or office</option><option>Several people or offices</option><option>Unclear</option><option>No one identified</option></select>
+            </label>
+            <label>How sure are you?
+              <select id="confidence"><option value="">Select</option><option>Sure</option><option>Partly sure</option><option>Not sure</option></select>
+            </label>
+          </div>
+          <label>Why this answer?<textarea id="confidenceReason" placeholder="Write what makes you sure or unsure."></textarea></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="Check thinking">
+      <div class="card">
+        <div class="card-head">
+          <h2>7. Check thinking</h2>
+          <p>Separate what was seen, heard, assumed, and still unknown.</p>
+        </div>
+        <div class="card-body">
+          <div class="grid two">
+            <label>What did we see ourselves?<textarea id="observedDirectly"></textarea></label>
+            <label>What did someone tell us?<textarea id="reportedInfo"></textarea></label>
+            <label>What are we assuming?<textarea id="assumptions"></textarea></label>
+            <label>What do we still need to check?<textarea id="uncertainties"></textarea></label>
+          </div>
+          <label>Useful lesson from this site<textarea id="learningPoint" placeholder="Example: This site may need both vendors and cleaners to act."></textarea></label>
+          <label>Support or approval needed<textarea id="escalationNeed" placeholder="Example: The gutter repair needs estates support."></textarea></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="Recommend and export">
+      <div class="card">
+        <div class="card-head">
+          <h2>8. Recommend and export</h2>
+          <p>Choose what should happen next.</p>
+        </div>
+        <div class="card-body">
+          <label>Student recommendation</label>
+          <div class="choice-list" data-radio="recommendation">
+            <label class="choice"><input name="recommendation" type="radio" value="Core case-study site" /><span>Core case-study site<small>Use for deeper follow-up and learning.</small></span></label>
+            <label class="choice"><input name="recommendation" type="radio" value="Standard action site" /><span>Standard action site<small>Use when the route and next action are clear.</small></span></label>
+            <label class="choice"><input name="recommendation" type="radio" value="Watch-list site" /><span>Watch-list site<small>Use when more checking or approval is needed.</small></span></label>
+            <label class="choice"><input name="recommendation" type="radio" value="Leave out for now" /><span>Leave out for now<small>Use when the route is weak, unclear, unsafe, or not suitable for this project.</small></span></label>
+          </div>
+          <div class="reason-preview" id="reasonPreview">Choose the classification and recommendation to build a reason.</div>
+          <label>Edited reason<textarea id="recommendationReason"></textarea></label>
+          <div class="card" style="box-shadow:none; margin:0;">
+            <div class="card-head"><h2>Ready to export?</h2><p>Complete missing core items where possible.</p></div>
+            <div class="card-body"><div id="readiness" class="status"></div></div>
+          </div>
+          <div class="grid two no-print">
+            <button type="button" onclick="preparePrint()">Export PDF</button>
+            <button type="button" class="secondary" onclick="downloadJSON()">Export data file</button>
+            <label class="button-label secondary" for="importFile">Import data file</label>
+            <input id="importFile" type="file" accept="application/json" style="display:none" />
+            <button type="button" class="danger" onclick="clearDraft()">Clear draft</button>
+          </div>
+          <div class="bluebox no-print">On a phone, choose “Save as PDF” from the print screen if it appears.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section id="printReport"></section>
+
+  <div class="nav-row no-print">
+    <div class="nav-inner">
+      <button type="button" class="secondary" id="prevBtn">Back</button>
+      <button type="button" class="ghost" id="saveBtn">Save</button>
+      <button type="button" id="nextBtn">Next</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "clear_amr_site_visit_index_v3";
+    const steps = Array.from(document.querySelectorAll(".step"));
+    let currentStep = 0;
+    let photos = [];
+
+    const fields = [
+      "siteName", "location", "visitDate", "visitTime", "investigator1", "investigator2", "personSpoken", "personRole",
+      "otherConcern", "visibleConcern", "siteActorAnswer", "followUpQuestion", "source", "route", "exposurePoint", "amrRelevance", "feasibleControl", "pathwaySentence",
+      "evidenceNote", "notClaimedYet", "exposureLevel", "feasibility", "authorityClarity", "confidence", "confidenceReason",
+      "observedDirectly", "reportedInfo", "assumptions", "uncertainties", "learningPoint", "escalationNeed", "recommendationReason"
+    ];
+
+    function value(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function selectedRadio(name) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : "";
+    }
+
+    function checkedValues(group) {
+      return Array.from(document.querySelectorAll(`[data-group="${group}"] input:checked`)).map(x => x.value);
+    }
+
+    function setCheckedValues(group, values) {
+      document.querySelectorAll(`[data-group="${group}"] input`).forEach(input => { input.checked = values.includes(input.value); });
+    }
+
+    function setRadio(name, val) {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(input => { input.checked = input.value === val; });
+    }
+
+    function collectData() {
+      const data = {};
+      fields.forEach(id => data[id] = value(id));
+      data.concerns = checkedValues("concerns");
+      data.pathwayCategory = selectedRadio("pathwayCategory");
+      data.recommendation = selectedRadio("recommendation");
+      data.askNotUsed = document.getElementById("askNotUsed").checked;
+      data.photos = photos;
+      data.savedAt = new Date().toISOString();
+      return data;
+    }
+
+    function loadData(data) {
+      fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = data[id] || ""; });
+      setCheckedValues("concerns", data.concerns || []);
+      setRadio("pathwayCategory", data.pathwayCategory || "");
+      setRadio("recommendation", data.recommendation || "");
+      document.getElementById("askNotUsed").checked = !!data.askNotUsed;
+      photos = Array.isArray(data.photos) ? data.photos : [];
+      renderPhotos();
+      updateAll(false);
+    }
+
+    function saveDraft(showMessage = true) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData()));
+        if (showMessage) flashSave();
+      } catch (err) {
+        alert("Draft could not be saved. Remove some images and try again.");
+      }
+    }
+
+    function flashSave() {
+      const btn = document.getElementById("saveBtn");
+      const old = btn.textContent;
+      btn.textContent = "Saved";
+      setTimeout(() => btn.textContent = old, 900);
+    }
+
+    function restoreDraft() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try { loadData(JSON.parse(raw)); } catch (err) {}
+    }
+
+    function updateStep() {
+      steps.forEach((s, i) => s.classList.toggle("active", i === currentStep));
+      document.getElementById("stepName").textContent = steps[currentStep].dataset.step;
+      document.getElementById("stepCount").textContent = `${currentStep + 1} of ${steps.length}`;
+      document.getElementById("progressBar").style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+      document.getElementById("prevBtn").disabled = currentStep === 0;
+      document.getElementById("nextBtn").textContent = currentStep === steps.length - 1 ? "Review" : "Next";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      updateReadiness();
+    }
+
+    function buildPathwaySentence() {
+      const s = value("source") || "[source]";
+      const r = value("route") || "[way it could move]";
+      const e = value("exposurePoint") || "[who or what it could reach]";
+      const a = value("amrRelevance") || "[why it matters]";
+      const c = value("feasibleControl") || "[possible control]";
+      return `At this site, ${s} could move through ${r} and reach ${e}. This matters because ${a}. A possible control is ${c}.`;
+    }
+
+    function updatePathwayPreview() {
+      const sentence = buildPathwaySentence();
+      document.getElementById("pathwayPreview").textContent = sentence;
+      const edited = document.getElementById("pathwaySentence");
+      if (!edited.dataset.touched && ["source", "route", "exposurePoint", "amrRelevance", "feasibleControl"].some(id => value(id))) edited.value = sentence;
+    }
+
+    function buildReasonSentence() {
+      const rec = selectedRadio("recommendation") || "[recommendation]";
+      const cat = selectedRadio("pathwayCategory") || "[main type of risk route]";
+      const exp = value("exposureLevel") || "[contact level]";
+      const feas = value("feasibility") || "[change within nine months]";
+      const auth = value("authorityClarity") || "[who can decide or act]";
+      const learn = value("learningPoint") || "[useful lesson]";
+      return `We recommend: ${rec}. The main route is ${cat}. Contact level is ${exp}. Change within nine months is ${feas}. Decision or action is ${auth}. Useful lesson: ${learn}.`;
+    }
+
+    function updateReasonPreview() {
+      const sentence = buildReasonSentence();
+      document.getElementById("reasonPreview").textContent = sentence;
+      const edited = document.getElementById("recommendationReason");
+      if (!edited.dataset.touched && (selectedRadio("recommendation") || selectedRadio("pathwayCategory"))) edited.value = sentence;
+    }
+
+    function updateReadiness() {
+      const askDone = document.getElementById("askNotUsed").checked || value("siteActorAnswer") || value("followUpQuestion") || value("personSpoken");
+      const checks = [
+        ["Site named", !!value("siteName")],
+        ["Observation written", !!value("visibleConcern")],
+        ["Ask step completed or skipped", !!askDone],
+        ["Risk route written", !!value("pathwaySentence")],
+        ["Evidence note or photo added", !!(value("evidenceNote") || photos.length)],
+        ["Main type of route selected", !!selectedRadio("pathwayCategory")],
+        ["Contact level selected", !!value("exposureLevel")],
+        ["Change in nine months selected", !!value("feasibility")],
+        ["Who can act selected", !!value("authorityClarity")],
+        ["Confidence selected", !!value("confidence")],
+        ["Thinking check started", !!(value("observedDirectly") || value("reportedInfo") || value("uncertainties"))],
+        ["Recommendation selected", !!selectedRadio("recommendation")]
+      ];
+      const box = document.getElementById("readiness");
+      if (!box) return;
+      box.innerHTML = checks.map(([label, ok]) => `<div class="status-item"><span>${escapeHTML(label)}</span><span class="${ok ? "ok" : "missing"}">${ok ? "Done" : "Missing"}</span></div>`).join("");
+    }
+
+    function updateAll(save = true) {
+      updatePathwayPreview();
+      updateReasonPreview();
+      updateReadiness();
+      if (save) saveDraft(false);
+    }
+
+    async function handlePhotos(files) {
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+        const dataUrl = await resizeImage(file, 1200, 0.74);
+        photos.push({ id: newId(), dataUrl, caption: "" });
+      }
+      renderPhotos();
+      updateAll();
+    }
+
+    function newId() { return crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()); }
+
+    function resizeImage(file, maxSize, quality) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = reject;
+          img.src = reader.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderPhotos() {
+      const grid = document.getElementById("photoGrid");
+      grid.innerHTML = photos.map((p, idx) => `
+        <div class="photo-card">
+          <img src="${p.dataUrl}" alt="Evidence photo ${idx + 1}" />
+          <textarea data-photo-caption="${p.id}" placeholder="Caption: what does this image show?">${escapeHTML(p.caption || "")}</textarea>
+          <div class="photo-actions no-print"><button type="button" class="danger" onclick="removePhoto('${p.id}')">Remove</button></div>
+        </div>
+      `).join("");
+      document.querySelectorAll("[data-photo-caption]").forEach(t => {
+        t.addEventListener("input", e => {
+          const p = photos.find(x => x.id === e.target.dataset.photoCaption);
+          if (p) p.caption = e.target.value;
+          updateAll();
+        });
+      });
+    }
+
+    function removePhoto(id) {
+      photos = photos.filter(p => p.id !== id);
+      renderPhotos();
+      updateAll();
+    }
+
+    function escapeHTML(str) {
+      return String(str || "").replace(/[&<>'"]/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;"}[c]));
+    }
+
+    function pills(items) {
+      return (items || []).filter(Boolean).map(x => `<span class="pill">${escapeHTML(x)}</span>`).join("") || "—";
+    }
+
+    function row(label, value) {
+      const v = typeof value === "string" ? escapeHTML(value || "—") : value;
+      return `<tr><th>${escapeHTML(label)}</th><td>${v}</td></tr>`;
+    }
+
+    function renderPrintSummary() {
+      const d = collectData();
+      const rows = [
+        row("Site", d.siteName),
+        row("Location", d.location),
+        row("Date and time", `${d.visitDate || ""} ${d.visitTime || ""}`.trim()),
+        row("Students", [d.investigator1, d.investigator2].filter(Boolean).join(", ")),
+        row("Person spoken to", [d.personSpoken, d.personRole].filter(Boolean).join(" — ")),
+        row("What was seen", d.visibleConcern),
+        row("Concern types", pills([...(d.concerns || []), d.otherConcern])),
+        row("Main answer heard", d.askNotUsed ? "No discussion was possible or needed now." : d.siteActorAnswer),
+        row("Risk route", d.pathwaySentence),
+        row("Evidence note", d.evidenceNote),
+        row("Do not claim yet", d.notClaimedYet),
+        row("Main type of route", d.pathwayCategory),
+        row("Contact level", d.exposureLevel),
+        row("Change within nine months", d.feasibility),
+        row("Who can decide or act", d.authorityClarity),
+        row("Confidence", d.confidence),
+        row("Reason for confidence", d.confidenceReason),
+        row("Seen by students", d.observedDirectly),
+        row("Heard from others", d.reportedInfo),
+        row("Still to check", d.uncertainties),
+        row("Useful lesson", d.learningPoint),
+        row("Support or approval needed", d.escalationNeed),
+        row("Recommendation", d.recommendation),
+        row("Reason", d.recommendationReason)
+      ];
+      const images = photos.length ? `<h2>Images</h2><div class="photo-grid">${photos.map((p, idx) => `<div class="photo-card"><img src="${p.dataUrl}" alt="Evidence photo ${idx + 1}" /><div style="padding:8px; font-size:0.9rem;">${escapeHTML(p.caption || "No caption")}</div></div>`).join("")}</div>` : "";
+      document.getElementById("printReport").innerHTML = `<h1>CLEAR-AMR Site Visit Record</h1><table class="summary-table">${rows.join("")}</table>${images}`;
+    }
+
+    function preparePrint() {
+      renderPrintSummary();
+      saveDraft(false);
+      setTimeout(() => window.print(), 150);
+    }
+
+    function downloadJSON() {
+      const data = JSON.stringify(collectData(), null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+      const a = document.createElement("a");
+      const site = value("siteName").replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "") || "site";
+      a.href = URL.createObjectURL(blob);
+      a.download = `CLEAR_AMR_${site}_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function clearDraft() {
+      if (!confirm("Clear this draft from this device?")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => { currentStep = Math.max(0, currentStep - 1); updateStep(); });
+    document.getElementById("nextBtn").addEventListener("click", () => { currentStep = Math.min(steps.length - 1, currentStep + 1); updateStep(); });
+    document.getElementById("saveBtn").addEventListener("click", () => saveDraft(true));
+    document.getElementById("photoInput").addEventListener("change", e => handlePhotos(e.target.files));
+    document.getElementById("importFile").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try { loadData(JSON.parse(reader.result)); saveDraft(true); }
+        catch (err) { alert("This file could not be imported."); }
+      };
+      reader.readAsText(file);
+    });
+
+    document.getElementById("pathwaySentence").addEventListener("input", e => { e.target.dataset.touched = "true"; });
+    document.getElementById("recommendationReason").addEventListener("input", e => { e.target.dataset.touched = "true"; });
+    document.addEventListener("input", () => updateAll(true));
+    document.addEventListener("change", () => updateAll(true));
+
+    const today = new Date();
+    if (!document.getElementById("visitDate").value) document.getElementById("visitDate").value = today.toISOString().slice(0,10);
+    restoreDraft();
+    updateStep();
+    updateAll(false);
+  </script>
+</body>
+</html>
